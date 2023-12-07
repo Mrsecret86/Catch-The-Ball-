@@ -19,6 +19,9 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		this.caught = 0
 		this.bomb = undefined;
 		this.bombSpeed = 70;
+		this.timer = 60
+		this.timerLabel = undefined
+		this.countdown = undefined
 	}
 
 	// PRELOAD METHOD
@@ -46,10 +49,6 @@ export default class CatchTheBallScene extends Phaser.Scene {
 			callbackScope: this,
 			loop: true
 		})
-		this.caughtText = this.add.text(16, 16, 'Caught : 0', {
-			// @ts-ignore
-			fontSize: '16px', fill: 'black'
-		})
 		this.physics.add.overlap(
 			this.bucket,
 			this.balls,
@@ -57,6 +56,32 @@ export default class CatchTheBallScene extends Phaser.Scene {
 			null,
 			this
 		)
+		this.caughtText = this.add.text(16, 16, 'Caught : 0', {
+			// @ts-ignore
+			fontSize: '16px', fill: 'black'
+		}).setDepth(1)
+		this.bomb = this.physics.add.group({
+			classType: FallingObject,
+			maxSize: 10,
+			runChildUpdate: true
+		})
+		this.time.addEvent({
+			delay: Phaser.Math.Between(4000, 8000),
+			callback: this.spawnBomb,
+			callbackScope: this,
+			loop: true
+		})
+		this.physics.add.overlap(
+			this.bucket,
+			this.bomb,
+			this.caughtBomb,
+			null,
+			this
+		)
+		this.timerLabel = this.add.text(500, 16, 'Time :', {
+			// @ts-ignore
+			fontSize: '16px', fill: 'black'
+		}).setDepth(1)
 	}
 
 	// UPDATE METHOD
@@ -67,6 +92,9 @@ export default class CatchTheBallScene extends Phaser.Scene {
 			this.bucket.setVelocity(200, 200)
 		}
 		this.caughtText.setText('Caught: '+ this.caught)
+		if(this.startGame = true){
+			this.timerLabel.setText('Timer :'+ this.timer)
+		}
 	}
 
  	// CREATE BUCKET METHOD
@@ -112,7 +140,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 	}
 
 	// SPAWN Bomb
-		spawnBomb(){
+	spawnBomb(){
 		const config = {
 			speed: 30,
 			rotation: 0.1
@@ -126,9 +154,29 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		}
 	}
 
-		// CAUGHT BOMB
-		caughtBomb(bucket, bomb){
-			bomb.die()
-			this.
+	// CAUGHT BOMB
+	caughtBomb(bucket, bomb){
+		bomb.die()
+		this.caught -= 1
+	}
+
+	// GAMESTART METHOD
+	gameStart(){
+		this.startGame = true
+		this.countdown = this.time.addEvent({
+			delay:60000,
+			callback: this.gameOver,
+			callbackScope: this,
+			loop: true
+		})
+	}
+
+	// GAMEOVER METHOD
+	gameOver(){
+		this.timer--
+		if(this.timer <0){
+			this.scene.start('over-scene',
+			{caught: this.caught})
 		}
+	}
 }
