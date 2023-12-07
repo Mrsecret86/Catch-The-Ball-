@@ -66,7 +66,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 			runChildUpdate: true
 		})
 		this.time.addEvent({
-			delay: Phaser.Math.Between(4000, 8000),
+			delay: Phaser.Math.Between(5000, 10000),
 			callback: this.spawnBomb,
 			callbackScope: this,
 			loop: true
@@ -95,6 +95,12 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		if(this.startGame = true){
 			this.timerLabel.setText('Timer :'+ this.timer)
 		}
+		this.countdown = this.time.addEvent({
+			delay: 6000,
+			callback: this.gameOver,
+			callbackScope: this,
+			loop: true
+		})
 	}
 
  	// CREATE BUCKET METHOD
@@ -157,18 +163,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 	// CAUGHT BOMB
 	caughtBomb(bucket, bomb){
 		bomb.die()
-		this.caught -= 1
-	}
-
-	// GAMESTART METHOD
-	gameStart(){
-		this.startGame = true
-		this.countdown = this.time.addEvent({
-			delay:60000,
-			callback: this.gameOver,
-			callbackScope: this,
-			loop: true
-		})
+		this.caught -= 5
 	}
 
 	// GAMEOVER METHOD
