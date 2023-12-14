@@ -1,7 +1,9 @@
 import Phaser, { Scene } from 'phaser'
 
+import GameStartScene from './GameStartScene'
 import CatchTheBallScene from './CatchTheBallScene'
 import GameOverScene from './GameOverScene'
+import GameWinScene from './GameWinScene'
 
 const config = {
 	type: Phaser.AUTO,
@@ -14,7 +16,7 @@ const config = {
 			gravity: { y: 200 },
 		},
 	},
-	scene: [CatchTheBallScene, GameOverScene],
+	scene: [GameStartScene, CatchTheBallScene, GameWinScene, GameOverScene],
 	scale: {
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH

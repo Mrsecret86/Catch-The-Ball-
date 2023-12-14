@@ -22,6 +22,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		this.timer = 60
 		this.timerLabel = undefined
 		this.countdown = undefined
+		this.backsound = undefined
 	}
 
 	// PRELOAD METHOD
@@ -31,6 +32,9 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		this.load.image('ball','images/Ball.png')
 		this.load.image('bomb','images/Bomb.png')
 		this.load.image('explosion','images/Explosion.png')
+		this.load.audio('bgsound','sfx/bgmusic.mp3')
+		this.load.audio('boom','sfx/boom.wav')
+		this.load.audio('drop','sfx/drop.mp3')
 	}
 
 	// CREATE METHOD
@@ -66,7 +70,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 			runChildUpdate: true
 		})
 		this.time.addEvent({
-			delay: Phaser.Math.Between(5000, 10000),
+			delay: Phaser.Math.Between(10000, 20000),
 			callback: this.spawnBomb,
 			callbackScope: this,
 			loop: true
@@ -82,6 +86,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 			// @ts-ignore
 			fontSize: '16px', fill: 'black'
 		}).setDepth(1)
+
 	}
 
 	// UPDATE METHOD
@@ -93,10 +98,10 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		}
 		this.caughtText.setText('Caught: '+ this.caught)
 		if(this.startGame = true){
-			this.timerLabel.setText('Timer :'+ this.timer)
+			this.timerLabel.setText('Time :'+ this.timer)
 		}
 		this.countdown = this.time.addEvent({
-			delay: 6000,
+			delay: 10000,
 			callback: this.gameOver,
 			callbackScope: this,
 			loop: true
@@ -105,7 +110,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 
  	// CREATE BUCKET METHOD
 	createBucket(){
-		const bucket = this.physics.add.sprite(306, 100, 'bucket').setScale(0.4)
+		const bucket = this.physics.add.sprite(306, 50, 'bucket').setScale(0.4)
 		.refreshBody();
 		bucket.setCollideWorldBounds(true)
 		return bucket
@@ -133,7 +138,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		// @ts-ignore
 		const balls = this.balls.get(0,0, 'ball', config).setScale(0.2)
 		.refreshBody()
-		const positionX = Phaser.Math.Between(50, 350)
+		const positionX = Phaser.Math.Between(50, 612)
 		if (balls) {
 			balls.spawn(positionX)
 		}
@@ -145,7 +150,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		this.caught += 1
 	}
 
-	// SPAWN Bomb
+	// SPAWN BOMB
 	spawnBomb(){
 		const config = {
 			speed: 30,
@@ -154,7 +159,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		// @ts-ignore
 		const bomb = this.bomb.get(0,0, 'bomb', config).setScale(0.2)
 		.refreshBody()
-		const positionX = Phaser.Math.Between(50, 350)
+		const positionX = Phaser.Math.Between(50, 612)
 		if (bomb) {
 			bomb.spawn(positionX)
 		}
@@ -166,12 +171,15 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		this.caught -= 5
 	}
 
-	// GAMEOVER METHOD
+	// GAMEOVER / WIN METHOD
 	gameOver(){
 		this.timer--
-		if(this.timer <0){
-			this.scene.start('over-scene',
-			{caught: this.caught})
+		if(this.timer < 0 || this.caught >= 5){
+			this.scene.start('win-scene', {caught: this.caught})
+		// } else {
+		// 	this.scene.start('over-scene',
+		// 	{caught: this.caught})
 		}
 	}
+
 }
