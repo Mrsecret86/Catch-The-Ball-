@@ -10,7 +10,7 @@ export default class GameStartScene extends Phaser.Scene {
 
 	// PRELOAD METHOD
 	preload(){
-        this.load.image('background','image/Background.jpeg')
+        this.load.image('background','images/Background.jpeg')
         this.load.image('start-btn','images/Start Button.png')
 		this.load.image('logo','images/Logo.png')
 	}

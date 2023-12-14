@@ -11,7 +11,7 @@ export default class GameOverScene extends Phaser.Scene {
 
 	// PRELOAD METHOD
 	preload(){
-        this.load.image('background','image/Background.jpeg')
+        this.load.image('background','images/Background.jpeg')
         this.load.image('replay-btn','images/Replay Button.png')
 		this.load.image('gameover','images/Game Over.png')
 	}
@@ -19,7 +19,7 @@ export default class GameOverScene extends Phaser.Scene {
 	// CREATE METHOD
 	create(){
 		this.add.image(306, 216.5, 'background')
-		this.add.image(306, 200, 'gameover').setScale(0.5)
+		this.add.image(306, 150, 'gameover').setScale(0.5)
 		this.add.text(250, 290, 'Caught:' + this.caught, {
 			// @ts-ignore
 			fontSize: '24px', fill: 'black'

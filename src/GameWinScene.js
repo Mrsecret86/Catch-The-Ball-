@@ -11,7 +11,7 @@ export default class GameWinScene extends Phaser.Scene {
 
 	// PRELOAD METHOD
 	preload(){
-        this.load.image('background','image/Background.jpeg')
+        this.load.image('background','images/Background.jpeg')
         this.load.image('replay-btn','images/Replay Button.png')
 		this.load.image('youwin','images/You Win.png')
 	}
@@ -19,7 +19,7 @@ export default class GameWinScene extends Phaser.Scene {
 	// CREATE METHOD
 	create(){
 		this.add.image(306, 216.5, 'background')
-		this.add.image(306, 200, 'youwin').setScale(1)
+		this.add.image(306, 150, 'youwin').setScale(1)
 		this.add.text(250, 290, 'Caught:' + this.caught, {
 			// @ts-ignore
 			fontSize: '24px', fill: 'black'

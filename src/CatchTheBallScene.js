@@ -23,6 +23,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		this.timerLabel = undefined
 		this.countdown = undefined
 		this.backsound = undefined
+		this.startGame = false
 	}
 
 	// PRELOAD METHOD
@@ -32,9 +33,11 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		this.load.image('ball','images/Ball.png')
 		this.load.image('bomb','images/Bomb.png')
 		this.load.image('explosion','images/Explosion.png')
-		this.load.audio('bgsound','sfx/bgmusic.mp3')
-		this.load.audio('boom','sfx/boom.wav')
-		this.load.audio('drop','sfx/drop.mp3')
+		this.load.audio('bgsound','music/bgmusic.mp3')
+		this.load.audio('boom','music/boom.wav')
+		this.load.audio('drop','music/drop.mp3')
+		this.load.audio('gameover','music/gameover.wav')
+		this.load.audio('win','music/win.mp3')
 	}
 
 	// CREATE METHOD
@@ -82,11 +85,18 @@ export default class CatchTheBallScene extends Phaser.Scene {
 			null,
 			this
 		)
-		this.timerLabel = this.add.text(500, 16, 'Time :', {
-			// @ts-ignore
-			fontSize: '16px', fill: 'black'
-		}).setDepth(1)
-
+		this.backsound = this.sound.add('bgsound')
+		var soundConfig ={
+			loop: true,
+			volume: 0.2,
+		}
+		this.backsound.play(soundConfig)
+		if(this.startGame = true){
+			this.timerLabel = this.add.text(500, 16, 'Time : ', {
+				// @ts-ignore
+				fontSize: '16px', fill: 'black'
+			}).setDepth(1)
+		}
 	}
 
 	// UPDATE METHOD
@@ -98,14 +108,8 @@ export default class CatchTheBallScene extends Phaser.Scene {
 		}
 		this.caughtText.setText('Caught: '+ this.caught)
 		if(this.startGame = true){
-			this.timerLabel.setText('Time :'+ this.timer)
+			this.timerLabel.setText('Time : '+ this.timer)
 		}
-		this.countdown = this.time.addEvent({
-			delay: 10000,
-			callback: this.gameOver,
-			callbackScope: this,
-			loop: true
-		})
 	}
 
  	// CREATE BUCKET METHOD
@@ -148,6 +152,7 @@ export default class CatchTheBallScene extends Phaser.Scene {
 	caughtBalls(bucket, balls){
 		balls.die()
 		this.caught += 1
+		this.sound.play('drop')
 	}
 
 	// SPAWN BOMB
@@ -169,17 +174,32 @@ export default class CatchTheBallScene extends Phaser.Scene {
 	caughtBomb(bucket, bomb){
 		bomb.die()
 		this.caught -= 5
+		this.sound.play('boom')
 	}
 
 	// GAMEOVER / WIN METHOD
 	gameOver(){
 		this.timer--
 		if(this.timer < 0 || this.caught >= 5){
+			this.sound.stopAll()
+			this.sound.play('win')
 			this.scene.start('win-scene', {caught: this.caught})
-		// } else {
-		// 	this.scene.start('over-scene',
-		// 	{caught: this.caught})
-		}
+		} else {
+			this.sound.stopAll()
+			this.sound.play('gameover')
+		  	this.scene.start('over-scene',
+			{caught: this.caught})
+			}
 	}
 
+	// GAME START METHOD
+	gameStart(){
+		this.startGame = true
+		this.countdown = this.time.addEvent({
+			delay: 10000,
+			callback: this.gameOver,
+			callbackScope: this,
+			loop: true
+		})
+	}
 }
